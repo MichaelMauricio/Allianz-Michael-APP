@@ -69,7 +69,6 @@ def generar_pdf(datos_personales, etfs_seleccionados, pesos, rendimiento, riesgo
     pdf.set_font("Arial", "B", 12)
     pdf.cell(200, 10, "Crecimiento de la Inversión", ln=True, align="L")
     pdf.image(grafico_simulacion, x=10, y=30, w=180)  # Insertar gráfica de comparación de inversión vs. ahorro
-    pdf.ln(95)  # Añadir espacio adicional después de la imagen
 
     # Guardar el PDF en un objeto de BytesIO para su descarga
     pdf_output = io.BytesIO()
