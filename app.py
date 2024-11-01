@@ -69,26 +69,22 @@ def generar_pdf(datos_personales, etfs_seleccionados, pesos, rendimiento, riesgo
     pdf.add_page()  # Nueva página para el gráfico del simulador de inversión
     pdf.set_font("Arial", "B", 12)
     pdf.cell(200, 10, "Crecimiento de la Inversión", ln=True, align="L")
+    pdf.image(grafico_simulacion, x=10, y=30, w=180)  # Insertar gráfica de comparación de inversión vs. ahorro
 
-    # Guardar la gráfica como archivo temporal para el PDF
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
-        grafico_simulacion.seek(0)
-        tmpfile.write(grafico_simulacion.read())
-        tmpfile.flush()
-        pdf.image(tmpfile.name, x=10, y=30, w=180)  # Insertar gráfica de comparación de inversión vs. ahorro
+    # Guardar el PDF en un archivo temporal y luego leerlo
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+        pdf.output(tmp_file.name)
+        tmp_file.seek(0)
+        pdf_output = tmp_file.read()
 
-    # Guardar el PDF en un objeto de BytesIO para su descarga
-    pdf_output = io.BytesIO()
-    pdf.output(pdf_output)
-    pdf_output.seek(0)
     return pdf_output
 
 # Función auxiliar para guardar gráficas
 def guardar_grafico(fig):
-    img = io.BytesIO()
-    fig.savefig(img, format="PNG")
+    img = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    fig.savefig(img.name, format="PNG")
     img.seek(0)
-    return img
+    return img.name
 
 # Nombres completos de los ETFs
 etf_names = {
