@@ -6,6 +6,7 @@ from fpdf import FPDF
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import io
+import tempfile
 
 # Configuración inicial de Streamlit
 st.set_page_config(page_title="Simulador de Inversiones - Allianz Patrimonial", layout="wide")
@@ -68,7 +69,13 @@ def generar_pdf(datos_personales, etfs_seleccionados, pesos, rendimiento, riesgo
     pdf.add_page()  # Nueva página para el gráfico del simulador de inversión
     pdf.set_font("Arial", "B", 12)
     pdf.cell(200, 10, "Crecimiento de la Inversión", ln=True, align="L")
-    pdf.image(grafico_simulacion, x=10, y=30, w=180)  # Insertar gráfica de comparación de inversión vs. ahorro
+
+    # Guardar la gráfica como archivo temporal para el PDF
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmpfile:
+        grafico_simulacion.seek(0)
+        tmpfile.write(grafico_simulacion.read())
+        tmpfile.flush()
+        pdf.image(tmpfile.name, x=10, y=30, w=180)  # Insertar gráfica de comparación de inversión vs. ahorro
 
     # Guardar el PDF en un objeto de BytesIO para su descarga
     pdf_output = io.BytesIO()
